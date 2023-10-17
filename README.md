@@ -4,7 +4,7 @@
  I'm still *super* early in this process, so things are a bit clunky at the moment. Beware of bugs! 👻
  
 ## Notes:
-- Folders are non-functional (rip), this is the biggest thing i'm working on
+- Folders are non-functional (rip), this is the biggest thing i'm working on  
   Right now they will appear as non-clickable buttons on the page. You can currently move and delete them.
 - Separators are ignored on the ntp
 - There's no release yet, so you'll have to install the extension manually. (See below)
