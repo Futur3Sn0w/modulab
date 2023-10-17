@@ -1,0 +1,40 @@
+@media (prefers-color-scheme: light) {
+    :root {
+        --backcolor: #eee;
+        --backimg: url('../light.png');
+
+        --module-back: #eee;
+        --icon-back: #fff;
+
+        --context-menu-back: #eeeeee55;
+        --context-menu-sep: rgba(0, 0, 0, .5);
+        --context-border-a: #00000045;
+        --context-border-b: #ffffffd3;
+
+        --text-a: #eaeaea;
+        --text-b: #000;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --backcolor: #222;
+        --backimg: url('../dark.png');
+
+        --module-back: #515151;
+        --icon-back: #6E6E6E;
+
+        --context-menu-back: #22222255;
+        --context-menu-sep: #ffffff40;
+        --context-border-a: #000000;
+        --context-border-b: #FFFFFF11;
+
+        --text-a: #000;
+        --text-b: #fff;
+    }
+}
+
+.surface-item {
+    box-shadow: 0 5px 10px #00000028;
+    background-color: var(--module-back);
+}

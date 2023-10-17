@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+    "name": "SFNTPFF",
+    "version": "0.1",
+    "description": "Safari's new-tab UI for Firefox",
+    "permissions": [
+        "bookmarks"
+    ],
+    "chrome_url_overrides": {
+        "newtab": "index.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "about:newtab"
+            ],
+            "js": [
+                "newtab.js"
+            ]
+        }
+    ]
+}

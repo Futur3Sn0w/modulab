@@ -1,0 +1,69 @@
+.faves-module {
+    background-color: transparent;
+    min-height: 114px;
+
+    display: flex;
+    gap: 16px;
+    margin-bottom: 30px;
+    transition: opacity .2s;
+}
+
+.faves-module.is-empty::after {
+    content: 'No Favorites';
+    font-weight: 700;
+    font-size: 18px;
+    opacity: .5;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.faves-module.soft-hide {
+    opacity: 0;
+}
+
+.faves-module .user-bookmark {
+    width: 64px;
+    min-height: 64px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* transition: opacity .2s; */
+    /* justify-content: center; */
+}
+
+.faves-module .user-bookmark .label {
+    width: 64px;
+    max-height: 30px;
+    max-lines: 2;
+    overflow: hidden;
+
+    font-size: 11px;
+    text-align: center;
+}
+
+.user-bookmark .icon {
+    width: 64px;
+    aspect-ratio: 1/1;
+
+    border-radius: 8.5px;
+    overflow: hidden;
+    background-color: var(--icon-back);
+
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    display: flex;
+    flex-grow: 0;
+}
+
+.faves-module .user-bookmark:active .icon,
+.faves-module .user-bookmark.active .icon {
+    opacity: .75;
+}
