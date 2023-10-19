@@ -17,18 +17,30 @@ body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-body::before {
-    content: "";
+.back {
     width: 100%;
     height: 100%;
 
     position: absolute;
     z-index: -2;
 
-    background-image: var(--backimg);
-    background-position: bottom center;
-    filter: blur(500px) saturate(2);
-    opacity: .05;
+    background-image: var(--back-gradi);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0;
+
+    transition: opacity .5s;
+    transition-delay: .25s;
+}
+
+body.loaded .back {
+    opacity: 0;
+}
+
+body.loaded .back.visible,
+.back.visible {
+    opacity: .5;
 }
 
 .ntp-module {
@@ -49,12 +61,7 @@ body::before {
 }
 
 .ntp-module.hidden {
-    height: 0;
-    padding: 0;
-    opacity: 0;
-    pointer-events: none;
-    margin: 0;
-    margin-bottom: -60px;
+    display: none;
 }
 
 .ntp-module::before {
@@ -68,14 +75,14 @@ body::before {
 }
 
 .controller-btn {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 600;
-    opacity: .7;
+    opacity: .6;
 
     font-family: 'SF Pro', SFSymbols;
 
     position: absolute;
-    bottom: 7px;
+    bottom: 9px;
     right: 18px;
 }
 
@@ -85,10 +92,11 @@ body::before {
 
 .controller {
     width: 232px;
-    height: 100px;
+    height: fit-content;
 
     box-sizing: border-box;
-    padding: 5px;
+    padding-top: 5px;
+    background-color: var(--context-menu-back);
 
     position: absolute;
     z-index: 10;
@@ -98,10 +106,12 @@ body::before {
 
     transition: .2s;
 
+    border-radius: 8px;
     transform: scale(.6);
     transform-origin: bottom right;
     pointer-events: none;
     opacity: 0;
+    backdrop-filter: blur(50px);
     box-shadow:
         0 5px 10px #00000028;
 }
@@ -115,17 +125,16 @@ body::before {
 .controller::before {
     content: '';
     position: absolute;
-    z-index: -2;
+    z-index: 20;
     top: 0;
     left: 0;
 
     width: 100%;
     height: 100%;
+    pointer-events: none;
 
-    border-radius: 9px;
-    background-color: var(--context-menu-back);
+    border-radius: 8px;
     /* opacity: .75; */
-    backdrop-filter: blur(50px);
     box-shadow:
         inset 0 0 0 1px #000,
         inset 0 0 0 2px #ffffff11;
@@ -133,13 +142,78 @@ body::before {
 
 .settingBox {
     width: 100%;
+    height: 30px;
+
     display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 5px;
+    /* background-color: var(--icon-back); */
 }
 
-.settingBox::after {
-    content: attr(label);
+.settingBox label {
+    font-size: 14px;
 }
 
+.settingBox[label="Background"] {
+    margin-top: 10px;
+
+    position: relative;
+}
+
+.settingBox[label="Background"]::before {
+    content: '';
+
+    width: 90%;
+    height: 1px;
+
+    position: absolute;
+    top: -5px;
+    left: 5%;
+
+    background-color: var(--surface-sep);
+}
+
+.wall-reel {
+    width: 100%;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    position: relative;
+
+    height: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    padding: 0;
+    margin-top: 5px;
+    /* scrollbar-width: none !important; */
+
+    border-radius: 0 0 8px 8px;
+    background-color: rgba(255, 255, 255, .1);
+}
+
+.wall-reel.visible {
+    height: fit-content;
+    overflow-x: scroll;
+    padding: 10px;
+}
+
+.wall-reel .wr-wall {
+    aspect-ratio: 1920/1080;
+    height: 65px;
+
+    border-radius: 5px;
+    background-color: var(--icon-back);
+    background-size: cover;
+}
+
+.wall-reel .wr-wall.selected {
+    box-shadow: inset 0 0 0 2px highlight;
+}
 
 .item-context-menu {
     width: 200px;
@@ -160,7 +234,7 @@ body::before {
 
     /* transition: opacity .2s; */
 
-    border-radius: 9px;
+    border-radius: 8px;
     pointer-events: none;
     opacity: 0;
     box-shadow:
@@ -182,7 +256,7 @@ body::before {
     width: 100%;
     height: 100%;
 
-    border-radius: 9px;
+    border-radius: 8px;
     background-color: var(--context-menu-back);
     /* opacity: .75; */
     backdrop-filter: blur(50px);
@@ -225,6 +299,8 @@ body::before {
 
     width: calc(100% - 20px);
     height: 1px;
+
+    pointer-events: none;
 
     background-color: var(--context-menu-sep);
 

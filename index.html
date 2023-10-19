@@ -15,19 +15,33 @@
 </head>
 
 <body>
-    <div class="ntp-module faves-module" label="Favorites"></div>
-    <div class="ntp-module second-module surface-item hidden" label="Frequently Visited"></div>
-    <div class="ntp-module third-module  surface-item hidden" label="Shared with you"></div>
+    <div class="hud"></div>
+    <div class="back visible"></div>
+    <div class="ntp-module faves-module" label="Favorites">
+        <div class="backBtn">􀆉</div>
+    </div>
+    <!-- <div class="ntp-module second-module surface-item hidden" label="Recent downloads"></div> -->
+    <!-- <div class="ntp-module third-module  surface-item hidden" label="Something else?"></div> -->
 
     <div class="controller">
-        <div class="settingBox" label="Setting name" icn="fav">
-            <input type="checkbox" class="settingCB">
+        <div class="settingBox" label="Background">
+            <input type="checkbox" id="background" class="settingCB">
+            <label for="background">Background</label>
+        </div>
+        <div class="wall-reel">
+            <div class="wr-wall" index="1" style="background-image: url('demo/back1.png');"></div>
+            <div class="wr-wall" index="2" style="background-image: url('demo/back2.png');"></div>
+            <div class="wr-wall" index="3" style="background-image: url('demo/back3.png');"></div>
+            <div class="wr-wall" index="4" style="background-image: url('demo/back4.png');"></div>
+            <div class="wr-wall" index="5" style="background-image: url('/dark.png');"></div>
+            <div class="wr-wall" index="6" style="background-image: url('/light.png');"></div>
         </div>
     </div>
-    <div class="controller-btn">􀜊</div>
+    <div class="controller-btn">􀌆</div>
 
     <div class="item-context-menu">
         <div class="icm-item icm-newtab">Open in new tab</div>
+        <div class="icm-item icm-rename">Rename</div>
         <div class="icm-item icm-delete">Delete</div>
     </div>
 

@@ -1,7 +1,9 @@
 @media (prefers-color-scheme: light) {
     :root {
         --backcolor: #eee;
-        --backimg: url('../light.png');
+        --surface-sep: rgba(255, 255, 255, 0.25);
+        --backcolor-inv: #222;
+        --back-gradi: url('../demo/back1.png');
 
         --module-back: #eee;
         --icon-back: #fff;
@@ -19,7 +21,9 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --backcolor: #222;
-        --backimg: url('../dark.png');
+        --surface-sep: #ffffff55;
+        --backcolor-inv: #eee;
+        --back-gradi: url('../demo/back2.png');
 
         --module-back: #515151;
         --icon-back: #6E6E6E;
@@ -37,4 +41,13 @@
 .surface-item {
     box-shadow: 0 5px 10px #00000028;
     background-color: var(--module-back);
+}
+
+.hud {
+    position: absolute;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+
+    display: none;
 }

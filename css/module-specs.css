@@ -2,10 +2,55 @@
     background-color: transparent;
     min-height: 114px;
 
+    position: relative;
+
     display: flex;
     gap: 16px;
     margin-bottom: 30px;
     transition: opacity .2s;
+}
+
+.faves-module.soft-hide {
+    opacity: 0;
+}
+
+.backBtn {
+    font-family: 'SF Pro', SFSymbols;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-a);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 22px;
+    height: 22px;
+    background-color: var(--backcolor-inv);
+    border-radius: 50%;
+
+    opacity: 0;
+    cursor: pointer;
+    pointer-events: none;
+
+    position: absolute !important;
+    top: -35px !important;
+    left: 0 !important;
+    z-index: 100 !important;
+}
+
+.faves-module[folderopen='true'] .backBtn {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.backBtn:active {
+    opacity: .7;
+}
+
+
+.faves-module[folderopen='true']::before {
+    margin-left: 28px;
 }
 
 .faves-module.is-empty::after {
@@ -20,10 +65,6 @@
     transform: translate(-50%, -50%);
 }
 
-.faves-module.soft-hide {
-    opacity: 0;
-}
-
 .faves-module .user-bookmark {
     width: 64px;
     min-height: 64px;
@@ -35,6 +76,38 @@
     align-items: center;
     /* transition: opacity .2s; */
     /* justify-content: center; */
+}
+
+.faves-module .user-bookmark[bookmark-type="separator"] {
+    background-color: var(--icon-back);
+
+    width: 1px;
+    height: 48px;
+    min-height: unset;
+
+    top: 8px;
+    margin-left: -1px;
+}
+
+.faves-module .user-bookmark[bookmark-type="separator"] .icon {
+    display: none !important;
+}
+
+.faves-module .user-bookmark[bookmark-type="folder"] .icon::after {
+    content: attr(numcis);
+
+    width: 30px;
+    height: 30px;
+
+    position: absolute;
+    z-index: -1;
+
+    background-color: red;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .faves-module .user-bookmark .label {
@@ -55,11 +128,16 @@
     overflow: hidden;
     background-color: var(--icon-back);
 
+    position: relative;
+    z-index: -2;
+
     background-size: auto;
     background-repeat: no-repeat;
     background-position: center;
 
     display: flex;
+    align-items: center;
+    justify-content: center;
     flex-grow: 0;
 }
 
