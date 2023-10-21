@@ -2,6 +2,7 @@
     :root {
         --backcolor: #eee;
         --surface-sep: rgba(255, 255, 255, 0.25);
+        --surface-btn: rgba(255, 255, 255, .5);
         --backcolor-inv: #222;
         --back-gradi: url('../demo/back1.png');
 
@@ -15,6 +16,9 @@
 
         --text-a: #eaeaea;
         --text-b: #000;
+
+        --gmenu-a: #E9EEF6;
+        --gmenu-b: #F8FAFE;
     }
 }
 
@@ -22,6 +26,7 @@
     :root {
         --backcolor: #222;
         --surface-sep: #ffffff55;
+        --surface-btn: rgba(255, 255, 255, .25);
         --backcolor-inv: #eee;
         --back-gradi: url('../demo/back2.png');
 
@@ -35,6 +40,9 @@
 
         --text-a: #000;
         --text-b: #fff;
+
+        --gmenu-a: #282A2C;
+        --gmenu-b: #1B1B1B;
     }
 }
 

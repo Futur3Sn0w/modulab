@@ -1,8 +1,5 @@
 let itemID
 let itemNI
-var numItems = 0;
-var numB = 0;
-var numF = 0;
 
 let contextItem
 let contextURL
@@ -41,13 +38,16 @@ $(window).on('load', function () {
 
     $(".faves-module").sortable({
         // containment: "parent",
-        revert: true,
+        // revert: true,
+        distance: 3,
+        delay: 100,
         items: ".user-bookmark"
     });
 
-    $('.faves-module').on('sortupdate', function () {
+    $('.faves-module').on('sortupdate', function (e) {
         itemNI = $('.user-bookmark[bookmark-id="' + itemID + '"]').index();
         browser.bookmarks.move(itemID, { index: itemNI });
+        e.stopPropagation();
     })
 
     browser.bookmarks.onCreated.addListener(bookmarkHandler);
@@ -69,16 +69,24 @@ $(window).on('load', function () {
         $('.wall-reel').addClass('visible');
         $('.back').addClass('visible');
     }
+
+    var userCBar = localStorage.getItem('user-cbar');
+    if (userCBar) {
+        if (userCBar == 'true') {
+            $('.chromeBar').addClass('visible');
+        } else {
+            $('.chromeBar').removeClass('visible');
+        }
+    } else {
+        localStorage.setItem('user-cbar', true);
+    }
     setChecks();
 
     $('body').addClass('loaded');
 })
 
-$(document).on('mousedown', function () {
-    $('.hud').empty();
-    $('.hud').append("1:" + currentFolderID).append('<br>');
-    $('.hud').append("2:" + currentFolderName).append('<br>');
-    $('.hud').append("3:" + parentFolderId).append('<br>');
+$('.gApp').on('click', function () {
+    window.location.href = $(this).attr('target');
 })
 
 $(document).on('click', '.user-bookmark', function (e) {
@@ -87,9 +95,7 @@ $(document).on('click', '.user-bookmark', function (e) {
             currentFolderID = $(this).attr('bookmark-id');
             currentFolderName = $(this).children('.label').text();
 
-            browser.bookmarks.get(currentFolderID).then((results) => {
-                parentFolderId = results[0].parentId;
-            });
+            parentFolderId = $(this).attr('bookmark-parent');
 
             $('.faves-module').attr('label', currentFolderName);
             $('.faves-module').attr('folderopen', true);
@@ -117,14 +123,8 @@ $(document).on('click', '.user-bookmark', function (e) {
                     div.attr('bookmark-index', currentChild.index);
                     div.attr('bookmark-type', currentChild.type);
                     div.attr('bookmark-id', currentChild.id);
+                    div.attr('bookmark-parent', currentChild.parentId);
                     $('.faves-module').append(div);
-
-                    if (currentChild.type == "bookmark") {
-                        numB++;
-                    } else if (currentChild.type == "folder") {
-                        numF++;
-                    }
-                    numItems++;
                 }
             });
         } else {
@@ -132,11 +132,8 @@ $(document).on('click', '.user-bookmark', function (e) {
         }
     }
 })
-$(document).on('click', '.backBtn', function (e) {
-    browser.bookmarks.get(parentFolderId).then((results) => {
-        parentFolderId = results[0].parentId;
-    });
 
+$(document).on('click', '.backBtn', function (e) {
     if (parentFolderId == "toolbar_____") {
         $('.faves-module').attr('label', 'Favorites');
         $('.faves-module').attr('folderopen', false);
@@ -172,17 +169,18 @@ $(document).on('click', '.backBtn', function (e) {
                 div.attr('bookmark-index', currentChild.index);
                 div.attr('bookmark-type', currentChild.type);
                 div.attr('bookmark-id', currentChild.id);
+                div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
-
-                if (currentChild.type == "bookmark") {
-                    numB++;
-                } else if (currentChild.type == "folder") {
-                    numF++;
-                }
-                numItems++;
             }
         });
     }
+
+    currentFolderID = parentFolderId
+    currentFolderName = parentFolderName
+
+    browser.bookmarks.get(parentFolderId).then((results) => {
+        parentFolderId = results[0].parentId;
+    });
 
     e.stopPropagation()
 })
@@ -202,6 +200,10 @@ $(document).on('contextmenu', '.user-bookmark', function (e) {
     contextItem = $(this).attr('bookmark-id');
 
     $('.item-context-menu').addClass('visible');
+})
+
+$('.waffleBtn').on('click', function () {
+    $('.googApps').addClass('visible');
 })
 
 $('.icm-newtab').on('click', function () {
@@ -227,6 +229,8 @@ $(document).on("mouseup", function (e) {
     var container2Btn = $('.user-bookmark');
     var container3 = $('.label');
     var container4 = $('.backBtn');
+    var container4 = $('.googApps');
+    var container4Btn = $('.waffleBtn');
 
     if (!container.is(e.target) && container.has(e.target).length === 0 && !containerBtn.is(e.target) && containerBtn.has(e.target).length === 0) {
         container.removeClass('visible');
@@ -239,6 +243,10 @@ $(document).on("mouseup", function (e) {
     if (!container3.is(e.target) && container3.has(e.target).length === 0 && !container2Btn.is(e.target) && container2Btn.has(e.target).length === 0 && !container2.is(e.target) && container2.has(e.target).length === 0 && !container4.is(e.target) && container4.has(e.target).length === 0) {
         // container3.removeClass('visible');
         nameCheck();
+    }
+
+    if (!container4.is(e.target) && container4.has(e.target).length === 0 && !container4Btn.is(e.target) && container4Btn.has(e.target).length === 0) {
+        container4.removeClass('visible');
     }
 
 });
@@ -280,7 +288,6 @@ $(document).on('keypress', '.label', function (e) {
 
 
 function bookmarkHandler(id, reorderInfo) {
-    numItems = 0;
     $('.faves-module').hide();
     $('.user-bookmark').remove();
     $('.faves-module').addClass('is-empty');
@@ -295,6 +302,7 @@ function bookmarkHandler(id, reorderInfo) {
                 div.attr('bookmark-index', currentChild.index);
                 div.attr('bookmark-type', currentChild.type);
                 div.attr('bookmark-id', currentChild.id);
+                div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
             } else if (currentChild.type == 'folder') {
                 browser.bookmarks.getChildren(currentChild.id).then((childs) => {
@@ -312,28 +320,24 @@ function bookmarkHandler(id, reorderInfo) {
                 div.attr('bookmark-index', currentChild.index);
                 div.attr('bookmark-type', currentChild.type);
                 div.attr('bookmark-id', currentChild.id);
+                div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
             }
-
-            if (currentChild.type == "bookmark") {
-                numB++;
-                numItems++;
-            } else if (currentChild.type == "folder") {
-                numF++;
-                numItems++;
-            }
         }
+        checkFavesEmpty();
     });
-    setTimeout(() => {
-        if (numItems === 0) {
-
-        } else if (numItems > 0) {
-            $('.faves-module').addClass('is-empty');
-            $('.faves-module').removeClass('is-empty');
-            $('.faves-module').sortable("refresh");
-        }
-    }, 100);
     $('.faves-module').show();
+}
+
+function checkFavesEmpty() {
+    var items = $('.faves-module').children('.user-bookmark').length;
+    if (items === 0) {
+
+    } else if (items > 0) {
+        $('.faves-module').addClass('is-empty');
+        $('.faves-module').removeClass('is-empty');
+        $('.faves-module').sortable("refresh");
+    }
 }
 
 $('.wr-wall').on('click', function () {
@@ -345,6 +349,7 @@ $('.wr-wall').on('click', function () {
 })
 
 function setChecks() {
+    $('.settingBox[label="Chrome bar"]').appendTo('.controller');
     $('.ntp-module').each((module) => {
         var cmod = $('.ntp-module').eq(module);
         var label = cmod.attr('label');
@@ -367,9 +372,15 @@ function setChecks() {
     } else {
         $('.settingCB[id="background"]').prop('checked', false);
     }
+
+    if ($('.chromeBar').hasClass('visible')) {
+        $('.settingCB[id="cBar"]').prop('checked', true);
+    } else {
+        $('.settingCB[id="cBar"]').prop('checked', false);
+    }
 }
 
-$(document).on('change', '.settingCB:not([id="background"])', function () {
+$(document).on('change', '.settingCB:not(.meta)', function () {
     var state = $(this).prop('checked');
     var thisLabel = $(this).parent().attr('label');
     if (state) {
@@ -391,6 +402,12 @@ $(document).on('change', '.settingCB[id="background"]', function () {
     localStorage.setItem('user-back', state);
 })
 
-function saveSettings() {
-
-}
+$(document).on('change', '.settingCB[id="cBar"]', function () {
+    var state = $(this).prop('checked');
+    if (state) {
+        $('.chromeBar').addClass('visible');
+    } else {
+        $('.chromeBar').removeClass('visible');
+    }
+    localStorage.setItem('user-cbar', state);
+})

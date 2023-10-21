@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "SFNTPFF",
-    "version": "0.2",
+    "version": "0.3.1",
     "description": "Safari's new-tab UI for Firefox",
     "permissions": [
         "bookmarks"

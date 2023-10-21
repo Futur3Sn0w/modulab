@@ -17,6 +17,87 @@
 <body>
     <div class="hud"></div>
     <div class="back visible"></div>
+    <div class="chromeBar visible">
+        <a href="https://mail.google.com" class="cbLink">Gmail</a>
+        <a href="https://images.google.com" class="cbLink">Images</a>
+        <div class="waffleBtn">􀦳</div>
+    </div>
+    <div class="googApps">
+        <div class="apps">
+            <li class="gApp ga1" label="Search" target="https://google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -1392px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga2" label="YouTube" target="https://youtube.com">
+                <div class="icn">
+                    <span style="background-position: 0 -2378px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga14" label="Music" target="https://music.youtube.com">
+                <div class="icn">
+                    <span
+                        style="background-position: center; background-size: 43px 43px; background-image: url(https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=https://music.youtube.com);"></span>
+                </div>
+            </li>
+            <li class="gApp ga3" label="Maps" target="https://maps.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -1044px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga4" label="Play Store" target="https://play.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -290px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga5" label="News" target="https://news.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -1334px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga6" label="Gmail" target="https://mail.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -2436px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga7" label="Meet" target="https://meet.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -348px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga8" label="Chat" target="https://chat.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -580px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga9" label="Contacts" target="https://contacts.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -1624px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga10" label="Drive" target="https://drive.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -116px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga11" label="Calendar" target="https://calendar.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -1276px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga12" label="Translate" target="https://translate.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -1682px;"></span>
+                </div>
+            </li>
+            <li class="gApp ga13" label="Photos" target="https://photos.google.com">
+                <div class="icn">
+                    <span style="background-position: 0 -870px;"></span>
+                </div>
+            </li>
+        </div>
+        <div class="moreGoogle gApp" target="https://about.google/products">More from Google</div>
+    </div>
     <div class="ntp-module faves-module" label="Favorites">
         <div class="backBtn">􀆉</div>
     </div>
@@ -24,8 +105,12 @@
     <!-- <div class="ntp-module third-module  surface-item hidden" label="Something else?"></div> -->
 
     <div class="controller">
+        <div class="settingBox" label="Chrome bar">
+            <input type="checkbox" id="cBar" class="settingCB meta">
+            <label for="cBar">Chrome bar</label>
+        </div>
         <div class="settingBox" label="Background">
-            <input type="checkbox" id="background" class="settingCB">
+            <input type="checkbox" id="background" class="settingCB meta">
             <label for="background">Background</label>
         </div>
         <div class="wall-reel">
