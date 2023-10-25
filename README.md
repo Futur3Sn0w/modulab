@@ -10,14 +10,14 @@
 As of version 0.3, you can click on the '.xpi' file of the [latest release](https://github.com/futur3sn0w/sf-ntp-ff/releases/latest), which will prompt you to install the extension.  
 The process is the same for updating, just click the '.xpi' file and follow the prompts!  
  
-## Usage:
-- You can upload an image, or select one of 6 **background images** included with the site.  
-Modulab will automatically select **theme colors** based on your background, and apply them to the page.
-- **Favorites** are populated automatically by whatever items are in Firefox's **bookmarks bar**.  
-You can edit, move, remove, or otherwise change any items from either the page or the toolbar, and the respective opposite will update automatically.
-- Click the **settings button** at the bottom-right of the page to open the **settings sidebar**.  
-From here, you can **enable or disable modules**, and change or disable your background.
-- This is very much a beta/pre-release. Expect bugs!
+## Usage & Notes:
+_This is very much a beta/pre-release. Expect bugs!_  
+- 'Modules' allow you to control what appears on the page, including downloads, favorites, a Google Chrome-inspired 'link bar', and more.
+- From the settings sidebar, you can upload and change the page's background, and enable/disable modules.
+- Selecting a custom background will also enable a dynamic color theme based on your selected image that applies to folders, download items, input controls, and more.  
+  The theme will be selected and applied automatically once you've selected an image, and from there, the background will be brightened or darkened based on your system's light/dark theme.  
+- Your favorites are mirrored from Firefox's bookmarks toolbar, so any changes you make in one will automatically update in the other.  
+  You can double-click to rename items just like in Safari, and you can right-click to delete or open a bookmark in a new tab.  
 
 ## For developers:  
 You can download the [main branch code](https://github.com/Futur3Sn0w/sf-ntp-ff/archive/refs/heads/main.zip), and load it as a temporary extension.  
