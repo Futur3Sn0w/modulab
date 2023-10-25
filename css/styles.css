@@ -6,29 +6,108 @@ body {
     background-color: var(--backcolor);
     color: var(--text-b);
 
-    display: flex;
-    gap: 60px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
+
+    position: relative;
+
+    opacity: 0;
+    transition: .5s;
 
     user-select: none;
 
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+body.loaded {
+    opacity: 1;
+}
+
+body::after {
+    content: '';
+    pointer-events: none;
+
+    width: 100vw;
+    height: 100vh;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    background-color: var(--accent);
+    mix-blend-mode: overlay;
+}
+
+body.light-theme::after {
+    mix-blend-mode: multiply;
+    opacity: .5;
+}
+
+
+body.controllerOpen .container {
+    width: calc(100vw - 242px);
+    height: calc(100vh - 16px);
+    transform: translateY(8px);
+    box-shadow:
+        7px 0 15px #00000055;
+    border-radius: 0 11px 11px 0;
+}
+
+.container {
+    background-color: var(--backcolor);
+    transition: .5s;
+    opacity: 0;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    display: flex;
+    gap: 60px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+body.loaded .container {
+    opacity: 1;
+}
+
+.version {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 9;
+    padding: 5px 10px;
+
+    font-size: 12px;
+
+    background-color: var(--module-back);
+    border-radius: 500px;
+    cursor: pointer;
+}
+
+.version:hover {
+    text-decoration: underline;
+}
+
 .back {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 
     position: absolute;
     z-index: -2;
 
-    background-image: var(--back-gradi);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    object-position: center;
+    object-fit: cover;
     opacity: 0;
+
+    pointer-events: none;
 
     transition: opacity .5s;
     transition-delay: .25s;
@@ -38,9 +117,12 @@ body.loaded .back {
     opacity: 0;
 }
 
-body.loaded .back.visible,
-.back.visible {
-    opacity: .5;
+body.dark-theme.loaded .back {
+    opacity: .5 !important;
+}
+
+body.light-theme.loaded .back {
+    opacity: .75 !important;
 }
 
 .chromeBar {
@@ -89,12 +171,20 @@ body.loaded .back.visible,
     justify-content: center;
 
     font-size: 18px;
-    font-family: 'SF Pro', SF Pro;
+    font-family: 'SF Pro', SFPro;
 }
 
 .waffleBtn:hover,
 .waffleBtn:active {
     background-color: var(--surface-btn);
+}
+
+.profileBtn {
+    width: 35px;
+    aspect-ratio: 1/1;
+    background-color: white;
+    background-image: var(--avatar-image-url);
+    border-radius: 50%;
 }
 
 .googApps {
@@ -264,15 +354,63 @@ body.loaded .back.visible,
 }
 
 .controller-btn {
-    font-size: 28px;
+    font-size: 17px;
     font-weight: 600;
-    opacity: .6;
+    opacity: .5;
 
-    font-family: 'SF Pro', SFSymbols;
+    font-family: 'SF Pro', SFPro;
+
+    background-color: var(--accent) !important;
+    color: var(--accent-contrast);
+    box-sizing: border-box;
+    padding: 5px 28px 5px 5px;
+    overflow: hidden;
+    border-radius: 20px 0 0 20px;
+
+    transition: .15s;
 
     position: absolute;
     bottom: 9px;
-    right: 18px;
+    right: -15px;
+}
+
+.controller-btn::before {
+    content: '􀆉';
+    font-size: 11px;
+    font-family: 'SF Pro', SFPro;
+
+    position: absolute;
+    top: 9px;
+    left: -4px;
+    transition: .15s;
+    opacity: 0;
+}
+
+body.controllerOpen .controller-btn {
+    right: 10px;
+    border-radius: 50px;
+
+    padding-right: 23px;
+    padding-left: 10px;
+    opacity: .7;
+}
+
+.controller-btn:hover::before {
+    opacity: 1;
+    left: 8px;
+}
+
+body.controllerOpen .controller-btn::before {
+    transform: rotate(180deg);
+    opacity: 1;
+    left: 38px;
+}
+
+.controller-btn:hover {
+    right: 0;
+    padding-right: 13px;
+    padding-left: 20px;
+    opacity: .7;
 }
 
 .controller-btn:active {
@@ -281,37 +419,33 @@ body.loaded .back.visible,
 
 .controller {
     width: 232px;
-    height: fit-content;
+    height: 100%;
 
     box-sizing: border-box;
     padding-top: 5px;
-    background-color: var(--context-menu-back);
+    /* background-color: var(--context-menu-back); */
 
     position: absolute;
-    z-index: 10;
-    bottom: 60px;
-    right: 18px;
+    z-index: 8;
+    top: 0;
+    right: 0;
     overflow: hidden;
-
-    transition: .2s;
-
-    border-radius: 8px;
-    transform: scale(.6);
-    transform-origin: bottom right;
-    pointer-events: none;
     opacity: 0;
-    backdrop-filter: blur(50px);
-    box-shadow:
-        0 5px 10px #00000028;
+
+    transition: .5s;
+
+    display: flex;
+    flex-direction: column;
+
+    pointer-events: none;
 }
 
 .controller.visible {
-    transform: scale(1);
-    opacity: 1;
     pointer-events: all;
+    opacity: 1;
 }
 
-.controller::before {
+.controller::after {
     content: '';
     position: absolute;
     z-index: 20;
@@ -322,11 +456,28 @@ body.loaded .back.visible,
     height: 100%;
     pointer-events: none;
 
-    border-radius: 8px;
+    /* border-radius: inherit; */
     /* opacity: .75; */
-    box-shadow:
-        inset 0 0 0 1px #000,
-        inset 0 0 0 2px #ffffff11;
+}
+
+.controller::before {
+    content: "Settings";
+
+    font-size: 20px;
+    font-weight: 600;
+    padding: 5px 10px;
+}
+
+.controller .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: calc(100% - 10px);
+}
+
+.controller .sections .settingBox {
+    background-color: var(--surface-btn);
+    border-radius: 8px;
 }
 
 .settingBox {
@@ -337,7 +488,6 @@ body.loaded .back.visible,
     align-items: center;
     box-sizing: border-box;
     padding-left: 5px;
-    /* background-color: var(--icon-back); */
 }
 
 .settingBox label {
@@ -345,7 +495,7 @@ body.loaded .back.visible,
 }
 
 .settingBox[label="Background"] {
-    margin-top: 10px;
+    margin-top: auto;
 
     position: relative;
 }
@@ -361,6 +511,15 @@ body.loaded .back.visible,
     left: 5%;
 
     background-color: var(--surface-sep);
+}
+
+.settingCB {
+    accent-color: var(--accent);
+    color: var(--accent-contrast) !important;
+}
+
+.settingCB::after {
+    color: var(--accent-contrast) !important;
 }
 
 .wall-reel {
@@ -381,8 +540,8 @@ body.loaded .back.visible,
     margin-top: 5px;
     /* scrollbar-width: none !important; */
 
-    border-radius: 0 0 8px 8px;
-    background-color: rgba(255, 255, 255, .1);
+    /* border-radius: 0 0 8px 8px; */
+    /* background-color: rgba(255, 255, 255, .1); */
 }
 
 .wall-reel.visible {
@@ -394,14 +553,74 @@ body.loaded .back.visible,
 .wall-reel .wr-wall {
     aspect-ratio: 1920/1080;
     height: 65px;
+    flex-shrink: 0;
+    overflow: hidden;
+
+    position: relative;
 
     border-radius: 5px;
     background-color: var(--icon-back);
     background-size: cover;
 }
 
-.wall-reel .wr-wall.selected {
-    box-shadow: inset 0 0 0 2px highlight;
+.wall-reel .wr-wall.selected,
+.wall-reel .wr-wall[index='0'].selected .bi {
+    box-shadow: inset 0 0 0 3px var(--text-b);
+}
+
+.wr-wall[index='0'] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-image: attr(background-image);
+    border: none !important;
+}
+
+.wr-wall[index='0']::before {
+    content: "+";
+
+    position: absolute;
+    z-index: 2;
+    color: var(--text-b);
+    font-size: 30px;
+}
+
+.wr-wall[index='0'] .bi {
+    width: 100%;
+    height: 100%;
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    opacity: 0;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: inherit;
+}
+
+.wr-wall[index='0'].selected .bi {
+    opacity: .5;
+}
+
+.wr-wall[index='0'] label {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: flex;
+    padding-bottom: 100px;
+    opacity: 0;
+}
+
+.wr-wall[index='0'] input {
+    width: fit-content;
+    height: fit-content;
 }
 
 .item-context-menu {
@@ -472,7 +691,7 @@ body.loaded .back.visible,
 }
 
 .item-context-menu .icm-item:hover {
-    background-color: purple;
+    background-color: var(--accent);
 }
 
 .icm-item.icm-newtab {

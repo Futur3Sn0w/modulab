@@ -10,31 +10,28 @@ let currentFolderName
 let parentFolderId
 let parentFolderName
 
-$('.controller-btn').on('click', function () {
-    if ($('.controller').hasClass('visible')) {
-        $('.controller').removeClass('visible');
-    } else {
-        $('.controller').addClass('visible');
-    }
-})
-
-$('body').on('contextmenu', function (e) {
-    e.preventDefault()
-})
-
 $(window).on('load', function () {
     bookmarkHandler();
+    downloadsModule();
+    setBackground();
 
-    if (localStorage.getItem('backimg')) {
-        var wall = localStorage.getItem('backimg');
-        $('.wr-wall[index="' + wall + '"]').click();
-    } else {
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            $('.wr-wall[index="2"]').click();
+    const colorSchemeQueryList = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const setColorScheme = e => {
+        if (e.matches) {
+            // Dark
+            $('body').removeClass('light-theme').addClass('dark-theme')
         } else {
-            $('.wr-wall[index="1"]').click();
+            // Light
+            $('body').removeClass('dark-theme').addClass('light-theme')
         }
     }
+
+    setColorScheme(colorSchemeQueryList);
+    colorSchemeQueryList.addEventListener('change', setColorScheme);
+
+
+    $('.version').text('v' + browser.runtime.getManifest().version);
 
     $(".faves-module").sortable({
         // containment: "parent",
@@ -44,30 +41,21 @@ $(window).on('load', function () {
         items: ".user-bookmark"
     });
 
-    $('.faves-module').on('sortupdate', function (e) {
-        itemNI = $('.user-bookmark[bookmark-id="' + itemID + '"]').index();
-        browser.bookmarks.move(itemID, { index: itemNI });
-        e.stopPropagation();
-    })
-
     browser.bookmarks.onCreated.addListener(bookmarkHandler);
     browser.bookmarks.onChanged.addListener(bookmarkHandler);
     browser.bookmarks.onMoved.addListener(bookmarkHandler);
     browser.bookmarks.onRemoved.addListener(bookmarkHandler);
 
-    var userBack = localStorage.getItem('user-back');
-    if (userBack) {
-        if (userBack == 'true') {
-            $('.back').addClass('visible');
-            $('.wall-reel').addClass('visible');
+    var udl = localStorage.getItem('user-downloads');
+    if (udl) {
+        if (udl == 'true') {
+            $('.downloads-module').removeClass('hidden');
         } else {
-            $('.back').removeClass('visible');
-            $('.wall-reel').removeClass('visible');
+            $('.downloads-module').removeClass('visible');
         }
     } else {
-        localStorage.setItem('user-back', true);
-        $('.wall-reel').addClass('visible');
-        $('.back').addClass('visible');
+        localStorage.setItem('user-downloads', true);
+        $('.downloads-module').removeClass('hidden');
     }
 
     var userCBar = localStorage.getItem('user-cbar');
@@ -83,6 +71,161 @@ $(window).on('load', function () {
     setChecks();
 
     $('body').addClass('loaded');
+
+    if (localStorage.getItem('--accent')) {
+        $(':root').css('--accent', localStorage.getItem('--accent'));
+        $(':root').css('--accent-contrast', localStorage.getItem('--accent-contrast'));
+        $(':root').css('--accent-contrast-text', localStorage.getItem('--accent-contrast-text'));
+        $(':root').css('--accent-contrast-alpha', localStorage.getItem('--accent-contrast-alpha'));
+    } else {
+        setBackground();
+        colorTheivery();
+    }
+
+})
+
+function colorTheivery() {
+    const colorThief = new ColorThief();
+    const img = document.querySelector('.back');
+
+    if (localStorage.getItem('backimg') == '0') {
+        // Make sure image is finished loading
+        if (img.complete) {
+            var rgb = colorThief.getColor(img);
+            var rgbPretty = rgb[0] + ", " + rgb[1] + ", " + rgb[2];
+            var rgbCSS = 'rgb(' + rgbPretty + ")";
+            var contrastText = getContrastYIQ(rgbPretty);
+
+            $(':root').css('--accent', rgbCSS);
+            $(':root').css('--accent-contrast', 'rgb(' + contrastText + ')');
+            var notCT = (contrastText == '0, 0, 0') ? '255, 255, 255' : '0, 0, 0';
+            $(':root').css('--accent-contrast-text', 'rgb(' + notCT + ')');
+            $(':root').css('--accent-contrast-alpha', 'rgba(' + notCT + ', .3)');
+        } else {
+            img.addEventListener('load', function () {
+                var rgb = colorThief.getColor(img);
+                var rgbCSS = 'rgb(' + rgbPretty + ")";
+                var rgbPretty = rgb[0] + ", " + rgb[1] + ", " + rgb[2];
+                var contrastText = getContrastYIQ(rgbPretty);
+
+                $(':root').css('--accent', rgbCSS);
+                $(':root').css('--accent-contrast', 'rgb(' + contrastText + ')');
+                var notCT = (contrastText == '0, 0, 0') ? '255, 255, 255' : '0, 0, 0';
+                $(':root').css('--accent-contrast-text', 'rgb(' + notCT + ')');
+                $(':root').css('--accent-contrast-alpha', 'rgba(' + notCT + ', .3)');
+            });
+        }
+    } else {
+        $(':root').css('--accent', '#DDD');
+        $(':root').css('--accent-contrast', 'rgb(0, 0, 0)');
+        $(':root').css('--accent-contrast-text', 'rgb(255, 255, 255)');
+        $(':root').css('--accent-contrast-alpha', 'rgba(0, 0, 0, .3)');
+    }
+    localStorage.setItem('--accent', $(':root').css('--accent'));
+    localStorage.setItem('--accent-contrast', $(':root').css('--accent-contrast'));
+    localStorage.setItem('--accent-contrast-text', $(':root').css('--accent-contrast-text'));
+    localStorage.setItem('--accent-contrast-alpha', $(':root').css('--accent-contrast-alpha'));
+}
+
+function getContrastYIQ(rgb) {
+    var rgbArray = rgb.split(',');
+    var r = parseInt(rgbArray[0]);
+    var g = parseInt(rgbArray[1]);
+    var b = parseInt(rgbArray[2]);
+    var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '0, 0, 0' : '255, 255, 255';
+}
+
+function setBackground() {
+    var userBack = localStorage.getItem('user-back');
+    var imgData = localStorage.getItem('backImgData');
+    var wall = localStorage.getItem('backimg');
+    if (!userBack) {
+        localStorage.setItem('user-back', true);
+    }
+
+    if (!wall) {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            wall = 2
+        } else {
+            wall = 1
+        }
+    }
+
+    if (userBack == 'true') {
+        if (wall == '0') {
+            $('.back').attr('src', imgData);
+            $('.wr-wall').removeClass('selected');
+            $('.wr-wall[index="0"]').addClass('selected');
+            $('.wr-wall[index="0"] .bi').css('background-image', "url('" + imgData + "')");
+        } else {
+            $('.wr-wall').removeClass('selected');
+            $('.wr-wall[index="' + wall + '"]').click();
+        }
+
+        $('.back').addClass('visible');
+        $('.wall-reel').addClass('visible');
+    } else {
+        $('.back').removeClass('visible');
+        $('.wall-reel').removeClass('visible');
+    }
+
+}
+
+$('.faves-module').on('sortstop', function (e) {
+    var newIndex = $(".faves-module .user-bookmark").index($('.user-bookmark[bookmark-id="' + itemID + '"]'));
+    browser.bookmarks.move(itemID, { index: newIndex });
+    e.stopPropagation();
+})
+
+$('.version').on('click', function () {
+    window.location.href = "https://github.com/futur3sn0w/sf-ntp-ff"
+})
+
+$('#back-input').change(function () {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        var imgData = e.target.result;
+        try {
+            localStorage.removeItem('backImgData');
+            localStorage.setItem('backImgData', imgData);
+
+            $('.wr-wall.selected').removeClass('selected')
+            $('.wr-wall[index="0"]').addClass('selected');
+            localStorage.setItem('backimg', 0);
+            setBackground();
+            setTimeout(() => {
+                colorTheivery();
+                // window.location.reload();
+            }, 200);
+
+        } catch (error) {
+            alert("The selected image may be too large, or otherwise failed to upload. Try the image again, or try another image! Error: " + error);
+        }
+
+    }
+    reader.readAsDataURL(this.files[0]);
+    reader.onerror = function (e) {
+        alert("The image you selected may be too large, or otherwise failed to upload. Try again, or try another image!");
+    }
+    reader.onabort = function (e) {
+        alert("Background upload cancelled.");
+    }
+});
+
+
+$('.controller-btn').on('click', function () {
+    if ($('.controller').hasClass('visible')) {
+        $('.controller').removeClass('visible');
+        $('body').removeClass('controllerOpen')
+    } else {
+        $('.controller').addClass('visible');
+        $('body').addClass('controllerOpen')
+    }
+})
+
+$('body').on('contextmenu', function (e) {
+    e.preventDefault()
 })
 
 $('.gApp').on('click', function () {
@@ -110,11 +253,18 @@ $(document).on('click', '.user-bookmark', function (e) {
                     const lbl = $('<p class="label">');
                     if (currentChild.type == 'folder') {
                         browser.bookmarks.getChildren(currentChild.id).then((childs) => {
-                            icn.text(childs.length);
+                            icn.attr('numcis', childs.length);
                         });
                     } else if (currentChild.type == 'bookmark') {
                         div.attr('bookmark-url', currentChild.url);
-                        icn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + currentChild.url + "')");
+                        const backIcn = $('<div class="backIcn">');
+                        const frontIcn = $('<div class="frontIcn">');
+                        backIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+                        frontIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+                        // icn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+
+                        icn.append(backIcn);
+                        icn.append(frontIcn);
                     }
 
                     lbl.text(currentChild.title);
@@ -125,6 +275,13 @@ $(document).on('click', '.user-bookmark', function (e) {
                     div.attr('bookmark-id', currentChild.id);
                     div.attr('bookmark-parent', currentChild.parentId);
                     $('.faves-module').append(div);
+                    // VanillaTilt.init(document.querySelectorAll(".icon"), {
+                    //     max: 15,
+                    //     speed: 400,
+                    //     glare: true,
+                    //     scale: 1.1,
+                    //     "max-glare": .5
+                    // });
                 }
             });
         } else {
@@ -156,11 +313,19 @@ $(document).on('click', '.backBtn', function (e) {
                 const lbl = $('<p class="label">');
                 if (currentChild.type == 'folder') {
                     browser.bookmarks.getChildren(currentChild.id).then((childs) => {
-                        icn.text(childs.length);
+                        icn.attr('numcis', childs.length);
                     });
                 } else if (currentChild.type == 'bookmark') {
                     div.attr('bookmark-url', currentChild.url);
-                    icn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + currentChild.url + "')");
+                    const backIcn = $('<div class="backIcn">');
+                    const frontIcn = $('<div class="frontIcn">');
+                    backIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+                    backIcn.attr('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+                    frontIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+                    // icn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+
+                    icn.append(backIcn);
+                    icn.append(frontIcn);
                 }
 
                 lbl.text(currentChild.title);
@@ -171,6 +336,13 @@ $(document).on('click', '.backBtn', function (e) {
                 div.attr('bookmark-id', currentChild.id);
                 div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
+                // VanillaTilt.init(document.querySelectorAll(".icon"), {
+                //     max: 15,
+                //     speed: 400,
+                //     glare: true,
+                //     scale: 1.1,
+                //     "max-glare": .5
+                // });
             }
         });
     }
@@ -234,6 +406,7 @@ $(document).on("mouseup", function (e) {
 
     if (!container.is(e.target) && container.has(e.target).length === 0 && !containerBtn.is(e.target) && containerBtn.has(e.target).length === 0) {
         container.removeClass('visible');
+        $('body').removeClass('controllerOpen');
     }
 
     if (!container2.is(e.target) && container2.has(e.target).length === 0 && !container2Btn.is(e.target) && container2Btn.has(e.target).length === 0) {
@@ -286,8 +459,52 @@ $(document).on('keypress', '.label', function (e) {
     }
 })
 
+function downloadsModule() {
+    $('.user-download').remove();
+    $('.downloads-module').addClass('is-empty');
 
-function bookmarkHandler(id, reorderInfo) {
+    browser.downloads.search({
+        limit: 8,
+        orderBy: ["-startTime"]
+    }).then(function (items) {
+        items.forEach(function (item) {
+            var div = $("<div>").addClass("user-download").addClass("surface-item");
+            var img = $("<div>").addClass("icon");
+            var label = $("<p>").addClass("label").text(item.filename.slice(item.filename.lastIndexOf('/') + 1));
+            browser.downloads.getFileIcon(item.id).then(function (iconUrl) {
+                img.css("background-image", "url(" + iconUrl + ")");
+            });
+            div.append(img).append(label);
+            div.click(function () {
+                browser.downloads.open(item.id)
+            })
+            div.hover(
+                function () {
+                    var button = $("<button class='showFile'>").attr('data-text', "􀊫");
+                    button.click(function () {
+                        browser.downloads.show(item.id)
+                    })
+                    $(this).append(button);
+                },
+                function () {
+                    $(this).find("button").remove();
+                }
+            );
+
+
+            $(".downloads-module").append(div);
+        });
+        var dlItems = $('.downloads-module').children('.user-download').length;
+        if (dlItems === 0) {
+
+        } else if (dlItems > 0) {
+            $('.downloads-module').addClass('is-empty');
+            $('.downloads-module').removeClass('is-empty');
+        }
+    });
+}
+
+function bookmarkHandler() {
     $('.faves-module').hide();
     $('.user-bookmark').remove();
     $('.faves-module').addClass('is-empty');
@@ -306,11 +523,18 @@ function bookmarkHandler(id, reorderInfo) {
                 $('.faves-module').append(div);
             } else if (currentChild.type == 'folder') {
                 browser.bookmarks.getChildren(currentChild.id).then((childs) => {
-                    icn.text(childs.length);
+                    icn.attr('numcis', childs.length);
                 });
             } else if (currentChild.type == 'bookmark') {
                 div.attr('bookmark-url', currentChild.url);
-                icn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + currentChild.url + "')");
+                const backIcn = $('<div class="backIcn">');
+                const frontIcn = $('<div class="frontIcn">');
+                backIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+                frontIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+                // icn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
+
+                icn.append(backIcn);
+                icn.append(frontIcn);
             }
 
             if (currentChild.type !== 'separator') {
@@ -322,34 +546,44 @@ function bookmarkHandler(id, reorderInfo) {
                 div.attr('bookmark-id', currentChild.id);
                 div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
+                //     VanillaTilt.init(document.querySelectorAll(".icon"), {
+                //         max: 15,
+                //         speed: 400,
+                //         glare: true,
+                //         scale: 1.1,
+                //         "max-glare": .5
+                //     });
             }
         }
-        checkFavesEmpty();
+        var favItems = $('.faves-module').children('.user-bookmark').length;
+        if (favItems === 0) {
+
+        } else if (favItems > 0) {
+            $('.faves-module').addClass('is-empty');
+            $('.faves-module').removeClass('is-empty');
+            $('.faves-module').sortable("refresh");
+        }
     });
+
     $('.faves-module').show();
 }
 
-function checkFavesEmpty() {
-    var items = $('.faves-module').children('.user-bookmark').length;
-    if (items === 0) {
 
-    } else if (items > 0) {
-        $('.faves-module').addClass('is-empty');
-        $('.faves-module').removeClass('is-empty');
-        $('.faves-module').sortable("refresh");
-    }
-}
-
-$('.wr-wall').on('click', function () {
+$('.wr-wall:not([index="0"])').on('click', function () {
     $('.wr-wall.selected').removeClass('selected')
     $(this).addClass('selected');
-    localStorage.setItem('backimg', $(this).attr('index'));
-    var bi = $(this).css('background-image');
-    $('.back').css('background-image', bi);
+    if (!$('.wr-wall.selected').attr('index') == '0') {
+        localStorage.setItem('backimg', $(this).attr('index'));
+        var bi = $('.wr-wall.selected').css('background-image');
+        var url = bi.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
+        // alert(url);
+        $('.back').attr('src', url);
+    }
 })
 
 function setChecks() {
     $('.settingBox[label="Chrome bar"]').appendTo('.controller');
+    let sections = $('<div>').addClass('sections');
     $('.ntp-module').each((module) => {
         var cmod = $('.ntp-module').eq(module);
         var label = cmod.attr('label');
@@ -362,8 +596,10 @@ function setChecks() {
 
         settingBox.append(checkbox);
         settingBox.append(newLabel);
-        $('.controller').append(settingBox);
+
+        sections.append(settingBox);
     });
+    $('.controller').append(sections);
     $('.settingBox[label="Background"]').appendTo('.controller');
     $('.wall-reel').appendTo('.controller');
 
@@ -371,6 +607,12 @@ function setChecks() {
         $('.settingCB[id="background"]').prop('checked', true);
     } else {
         $('.settingCB[id="background"]').prop('checked', false);
+    }
+
+    if ($('.downloads-module').hasClass('hidden')) {
+        $('.settingCB[id="Recentdownloads"]').prop('checked', false);
+    } else {
+        $('.settingCB[id="Recentdownloads"]').prop('checked', true);
     }
 
     if ($('.chromeBar').hasClass('visible')) {
@@ -388,6 +630,16 @@ $(document).on('change', '.settingCB:not(.meta)', function () {
     } else {
         $('.ntp-module[label="' + thisLabel + '"]').addClass('hidden');
     }
+})
+
+$(document).on('change', '.settingCB[id="Recentdownloads"]', function () {
+    var state = $(this).prop('checked');
+    if (state) {
+        $('.user-downloads').removeClass('hidden');
+    } else {
+        $('.user-downloads').addClass('hidden');
+    }
+    localStorage.setItem('user-downloads', state);
 })
 
 $(document).on('change', '.settingCB[id="background"]', function () {

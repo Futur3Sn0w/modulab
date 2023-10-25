@@ -11,8 +11,8 @@
 
         --context-menu-back: #eeeeee55;
         --context-menu-sep: rgba(0, 0, 0, .5);
-        --context-border-a: #00000045;
-        --context-border-b: #ffffffd3;
+        --context-border-a: #00000099;
+        --context-border-b: #ffffff99;
 
         --text-a: #eaeaea;
         --text-b: #000;
@@ -44,6 +44,11 @@
         --gmenu-a: #282A2C;
         --gmenu-b: #1B1B1B;
     }
+}
+
+@font-face {
+    font-family: SFPro;
+    src: url("SF-Pro.ttf");
 }
 
 .surface-item {

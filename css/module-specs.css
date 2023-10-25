@@ -19,7 +19,7 @@
 }
 
 .backBtn {
-    font-family: 'SF Pro', SFSymbols;
+    font-family: 'SF Pro', SFPro;
     font-size: 12px;
     font-weight: 600;
     color: var(--text-a);
@@ -74,6 +74,8 @@
     min-height: 64px;
 
     position: relative;
+    z-index: 20;
+    pointer-events: all;
 
     display: flex;
     flex-shrink: 0;
@@ -98,9 +100,24 @@
     display: none !important;
 }
 
+.faves-module .user-bookmark[bookmark-type="folder"] .icon {
+    background-color: var(--accent);
+    filter: drop-shadow(0 5px 5px #00000033);
+}
+
+.faves-module .user-bookmark[bookmark-type="folder"] .icon:hover::after {
+    transform: translateY(-3px) scale(1.15);
+    filter: drop-shadow(0 10px 5px #00000055);
+}
+
+.faves-module .user-bookmark[bookmark-type="folder"] .icon:active::after {
+    transform: translateY(0);
+    filter: drop-shadow(0 5px 5px #00000033);
+}
+
 .faves-module .user-bookmark[bookmark-type="folder"] .icon::after {
     content: attr(numcis);
-    color: white !important;
+    color: var(--accent-contrast);
 
     width: 30px;
     height: 30px;
@@ -108,12 +125,14 @@
     position: absolute;
     z-index: -1;
 
-    background-color: red;
+    background-color: var(--accent-contrast-alpha);
     border-radius: 50%;
+    transition: .15s;
 
     display: flex;
     align-items: center;
     justify-content: center;
+    filter: drop-shadow(0 5px 5px #00000033);
 }
 
 .faves-module .user-bookmark .label {
@@ -130,12 +149,173 @@
     width: 64px;
     aspect-ratio: 1/1;
 
-    border-radius: 8.5px;
+    border-radius: 11px;
     overflow: hidden;
     background-color: var(--icon-back);
+    color: white;
+
+    box-sizing: border-box;
+    transition: .15s;
 
     position: relative;
-    z-index: -2;
+    z-index: 21;
+    pointer-events: all;
+
+    background-size: 32px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 0;
+
+    cursor: pointer;
+}
+
+.user-bookmark .icon:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 10px #00000028;
+}
+
+.user-bookmark .icon:active {
+    transform: translateY(0px);
+}
+
+.user-bookmark .icon::before {
+    content: '';
+    width: 102%;
+    height: 102%;
+    box-sizing: border-box;
+
+    position: absolute;
+    z-index: 10;
+
+    transition: .15s;
+
+    border-radius: 12px;
+    filter: blur(3px);
+    border: 4px solid var(--text-b);
+
+    opacity: .25;
+}
+
+.user-bookmark .icon:hover::before {
+    filter: blur(0);
+    opacity: .75;
+}
+
+.faves-module .user-bookmark:active .icon,
+.faves-module .user-bookmark.active .icon {
+    opacity: .75;
+    transform: translateY(0px);
+}
+
+.user-bookmark .icon .backIcn {
+    width: 150%;
+    height: 150%;
+
+    position: absolute;
+    /* bottom: 0; */
+    /* left: 0; */
+
+    filter: blur(30px) saturate(5);
+}
+
+.user-bookmark .icon .frontIcn {
+    width: 32px;
+    height: 32px;
+
+    transition: .15s;
+    border-radius: 5px;
+    overflow: hidden;
+
+    position: relative;
+    z-index: 12;
+    filter: drop-shadow(0 5px 5px #00000033);
+}
+
+.user-bookmark .icon:hover .frontIcn {
+    transform: translateY(-3px) scale(1.15);
+    filter: drop-shadow(0 10px 5px #00000055);
+}
+
+.faves-module .user-bookmark.active .icon .frontIcn {
+    filter: drop-shadow(0 5px 5px #00000033);
+    transform: translateY(0);
+}
+
+
+.downloads-module {
+    background-color: transparent;
+    min-height: 114px;
+    max-height: 500px;
+
+    position: relative;
+
+    display: flex;
+    flex-wrap: wrap;
+    /* grid-template-columns: repeat(auto-fill, 64px); */
+    /* grid-auto-columns: auto; */
+    gap: 16px;
+    margin-bottom: 30px;
+    transition: opacity .2s;
+}
+
+.downloads-module.is-empty::after {
+    content: 'No Downloads';
+    font-weight: 700;
+    font-size: 18px;
+    opacity: .5;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.downloads-module .user-download {
+    width: 210px;
+    height: 50px;
+
+    position: relative;
+    padding: 10px 5px;
+    box-sizing: border-box;
+
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+    border-radius: 8px;
+    overflow: hidden;
+
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+    align-items: center;
+    /* transition: opacity .2s; */
+    /* justify-content: center; */
+}
+
+.downloads-module .user-download .label {
+    max-width: 150px;
+    max-lines: 3;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    font-size: 12.5px;
+    /* text-align: center; */
+}
+
+.user-download .icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+
+    border-radius: 7px;
+    overflow: hidden;
+    background-color: #00000022;
+
+    position: relative;
 
     background-size: auto;
     background-repeat: no-repeat;
@@ -144,10 +324,56 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-grow: 0;
 }
 
-.faves-module .user-bookmark:active .icon,
-.faves-module .user-bookmark.active .icon {
+.downloads-module .user-download:active .icon,
+.downloads-module .user-download.active .icon {
     opacity: .75;
+}
+
+.user-download .showFile {
+    position: absolute;
+    right: 0px;
+    z-index: 3 !important;
+    font-family: 'SF Pro', SFPro;
+
+    width: 25px;
+    height: 25px;
+    color: var(--accent-contrast);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin-right: 5px;
+    box-sizing: border-box;
+
+    border: none !important;
+    background: transparent !important;
+    border-radius: 5px;
+    /* border: 1px solid pink; */
+    appearance: none;
+}
+
+.user-download .showFile::after {
+    content: attr(data-text);
+
+    position: absolute;
+    top: -15px;
+    right: -5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 50px;
+    height: 60px;
+
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-bottom: 3px;
+
+    background: linear-gradient(to right, transparent, var(--accent) 50%);
+    transition: .15s;
+    mix-blend-mode: multiply;
 }

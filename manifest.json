@@ -1,10 +1,12 @@
 {
     "manifest_version": 2,
-    "name": "SFNTPFF",
-    "version": "0.3.1",
+    "name": "Modulab",
+    "version": "0.4",
     "description": "Safari's new-tab UI for Firefox",
     "permissions": [
-        "bookmarks"
+        "bookmarks",
+        "downloads",
+        "downloads.open"
     ],
     "chrome_url_overrides": {
         "newtab": "index.html"
