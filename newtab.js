@@ -37,6 +37,7 @@ $(window).on('load', function () {
         // containment: "parent",
         // revert: true,
         distance: 3,
+        tolerance: "pointer",
         delay: 100,
         items: ".user-bookmark"
     });
@@ -254,7 +255,7 @@ $('body').on('contextmenu', function (e) {
 })
 
 $('.gApp').on('click', function () {
-    window.location.href = $(this).attr('target');
+    window.open($(this).attr('target'), '_blank')
 })
 
 $(document).on('click', '.user-bookmark', function (e) {
@@ -303,12 +304,16 @@ $(document).on('click', '.user-bookmark', function (e) {
                 }
             });
         } else {
-            window.location.href = $(this).attr('bookmark-url')
+            window.open($(this).attr('bookmark-url'), '_blank')
         }
     }
 })
 
 $(document).on('click', '.backBtn', function (e) {
+    location.reload();
+})
+
+$(document).on('click', 'AAAAAbackBtn', function (e) {
     if (parentFolderId == "toolbar_____") {
         $('.faves-module').attr('label', 'Favorites');
         $('.faves-module').attr('folderopen', false);

@@ -188,7 +188,7 @@ body.light-theme.loaded .back {
 }
 
 .googApps {
-    width: 400px;
+    width: 420px;
     height: 470px;
 
     overflow-y: scroll;
@@ -338,6 +338,10 @@ body.light-theme.loaded .back {
     /* padding: 20px; */
     box-sizing: border-box;
     margin: 0 50px;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 
     position: relative;
 
