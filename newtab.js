@@ -33,12 +33,37 @@ $(window).on('load', function () {
 
     $('.version').text('v' + chrome.runtime.getManifest().version);
 
-    $(".faves-module").sortable({
+    $(".faves-module .links").sortable({
         // containment: "parent",
         // revert: true,
         distance: 3,
         delay: 100,
         items: ".user-bookmark"
+    });
+
+    const savedOrder = localStorage.getItem("gAppOrder");
+    if (savedOrder) {
+        const orderArray = savedOrder.split(",");
+        orderArray.forEach(function (id) {
+            if (id) {  // Check to avoid appending empty IDs
+                $(".googApps .apps").append($("#" + id));  // Append element using the correct selector
+            }
+        });
+    }
+
+    $(".googApps .apps").sortable({
+        containment: "parent",
+        distance: 3,
+        tolerance: "pointer",
+        delay: 100,
+        items: ".gApp",
+        placeholder: "sortable-placeholder gApp",
+        stop: function () {
+            const order = $(".gApp").map(function () {
+                return this.id; // Collect IDs of the sorted elements
+            }).get();
+            localStorage.setItem("gAppOrder", order.join(",")); // Save the order to localStorage
+        }
     });
 
     chrome.bookmarks.onCreated.addListener(bookmarkHandler);
@@ -172,7 +197,7 @@ function setBackground() {
 
 }
 
-$('.faves-module').on('sortstop', function (e) {
+$('.faves-module .links').on('sortstop', function (e) {
     var newIndex = $(".faves-module .user-bookmark").index($('.user-bookmark[bookmark-id="' + itemID + '"]'));
     chrome.bookmarks.move(itemID, { index: newIndex });
     e.stopPropagation();
@@ -274,7 +299,7 @@ $(document).on('click', '.user-bookmark', function (e) {
                     div.attr('bookmark-type', currentChild.type);
                     div.attr('bookmark-id', currentChild.id);
                     div.attr('bookmark-parent', currentChild.parentId);
-                    $('.faves-module').append(div);
+                    $('.faves-module .links').append(div);
                 }
             });
         } else {
@@ -328,7 +353,7 @@ $(document).on('click', '.backBtn', function (e) {
                 div.attr('bookmark-type', currentChild.type);
                 div.attr('bookmark-id', currentChild.id);
                 div.attr('bookmark-parent', currentChild.parentId);
-                $('.faves-module').append(div);
+                $('.faves-module .links').append(div);
             }
         });
     }
@@ -416,7 +441,7 @@ function nameCheck() {
         if (itemID) {
             chrome.bookmarks.update(itemID, { title: $('.user-bookmark[bookmark-id="' + itemID + '"] .label').text() })
             $(this).attr('contenteditable', 'false');
-            $(".faves-module").sortable("enable");
+            $(".faves-module .links").sortable("enable");
         }
     }
 }
@@ -432,7 +457,7 @@ $(document).on('mouseup', '.user-bookmark', function () {
 
 $(document).on('dblclick', '.label', function () {
     contextItem = null;
-    $(".faves-module").sortable("disable");
+    $(".faves-module .links").sortable("disable");
     $(this).attr('contenteditable', 'true');
     $(this).focus();
     $(this).select();
@@ -500,18 +525,14 @@ function bookmarkHandler() {
             const div = $('<div class="user-bookmark"></div>');
             const icn = $('<div class="icon surface-item">');
             const lbl = $('<p class="label">');
+            let ccType = 'bookmark';
 
-            if (currentChild.type == 'separator') {
-                div.attr('bookmark-index', currentChild.index);
-                div.attr('bookmark-type', currentChild.type);
-                div.attr('bookmark-id', currentChild.id);
-                div.attr('bookmark-parent', currentChild.parentId);
-                $('.faves-module').append(div);
-            } else if (currentChild.type == 'folder') {
+            if (!currentChild.url || currentChild.url == undefined) {
+                ccType = 'folder'
                 chrome.bookmarks.getChildren(currentChild.id).then((childs) => {
                     icn.attr('numcis', childs.length);
                 });
-            } else if (currentChild.type == 'bookmark') {
+            } else {
                 div.attr('bookmark-url', currentChild.url);
                 const backIcn = $('<div class="backIcn">');
                 const frontIcn = $('<div class="frontIcn">');
@@ -527,10 +548,10 @@ function bookmarkHandler() {
                 div.append(icn);
                 div.append(lbl);
                 div.attr('bookmark-index', currentChild.index);
-                div.attr('bookmark-type', currentChild.type);
+                div.attr('bookmark-type', ccType);
                 div.attr('bookmark-id', currentChild.id);
                 div.attr('bookmark-parent', currentChild.parentId);
-                $('.faves-module').append(div);
+                $('.faves-module .links').append(div);
             }
         });
 

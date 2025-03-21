@@ -144,20 +144,20 @@ body.light-theme.loaded .back {
     padding: 15px;
 
     font-size: 13px;
-}
 
-.chromeBar.visible {
-    opacity: 1;
-    pointer-events: all;
-}
+    &.visible {
+        opacity: 1;
+        pointer-events: all;
+    }
 
-.chromeBar a {
-    text-decoration: none;
-    color: var(--text-b);
-}
+    & a {
+        text-decoration: none;
+        color: var(--text-b);
 
-.chromeBar a:hover {
-    text-decoration: underline;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 
 .waffleBtn {
@@ -172,11 +172,11 @@ body.light-theme.loaded .back {
 
     font-size: 18px;
     font-family: 'SF Pro', SFPro;
-}
 
-.waffleBtn:hover,
-.waffleBtn:active {
-    background-color: var(--surface-btn);
+    &:hover,
+    &:active {
+        background-color: var(--surface-btn);
+    }
 }
 
 .profileBtn {
@@ -188,7 +188,7 @@ body.light-theme.loaded .back {
 }
 
 .googApps {
-    width: 390px;
+    width: 400px;
     height: 470px;
 
     overflow-y: scroll;
@@ -208,10 +208,10 @@ body.light-theme.loaded .back {
     background-color: var(--gmenu-a);
     border-radius: 28px;
     box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, .3), 0 -2px 6px 2px rgba(0, 0, 0, .15);
-}
 
-.googApps.visible {
-    display: flex;
+    &.visible {
+        display: flex;
+    }
 }
 
 .apps {
@@ -232,8 +232,8 @@ body.light-theme.loaded .back {
 }
 
 .gApp:not(.moreGoogle) {
-    width: 84px;
-    height: 84px;
+    width: 88px;
+    height: 88px;
     padding: 6px;
 
     display: inline-flex;
@@ -241,44 +241,50 @@ body.light-theme.loaded .back {
     align-items: center;
     list-style-type: none;
     position: relative;
+    border: 2px solid transparent;
 
     border-radius: 16px;
-}
 
-.gApp:not(.moreGoogle):hover {
-    background-color: var(--gmenu-a);
-}
+    &:hover {
+        background-color: var(--gmenu-a);
+    }
 
-.gApp:not(.moreGoogle)::after {
-    content: attr(label);
-    font-size: 14px;
-    line-height: 18px;
+    &::after {
+        content: attr(id);
+        font-size: 14px;
+        line-height: 18px;
 
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-top: auto;
-}
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-top: auto;
+    }
 
-.gApp:not(.moreGoogle) .icn {
-    width: 57px;
-    height: 57px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    /* background-color: var(--module-back); */
-    /* aspect-ratio: 1/1; */
-}
+    & .icn {
+        width: 57px;
+        height: 57px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        /* background-color: var(--module-back); */
+        /* aspect-ratio: 1/1; */
 
-.gApp:not(.moreGoogle) .icn span {
-    width: 53px;
-    height: 53px;
-    display: inline-block;
-    background-image: url(https://ssl.gstatic.com/gb/images/sprites/p_1x_7725e9c78408.png);
-    background-size: 53px 2547px;
-    /* background-position: 0 -2378px; */
-    background-repeat: no-repeat;
+        & span {
+            width: 53px;
+            height: 53px;
+            display: inline-block;
+            background-image: url(https://ssl.gstatic.com/gb/images/sprites/p_1x_7725e9c78408.png);
+            background-size: 53px 2547px;
+            /* background-position: 0 -2378px; */
+            background-repeat: no-repeat;
+        }
+    }
+
+    &.sortable-placeholder {
+        pointer-events: none;
+        border: 2px dashed #aaa;
+    }
 }
 
 .moreGoogle {
@@ -303,24 +309,24 @@ body.light-theme.loaded .back {
     position: relative;
 
     cursor: pointer;
-}
 
-.moreGoogle:before {
-    content: " ";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    border-radius: 100px;
-    background: #a8c7fa;
-    background: var(--gm3-sys-color-primary, #a8c7fa);
-    transition: opacity .5s ease-out;
-}
+    &:before {
+        content: " ";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        border-radius: 100px;
+        background: #a8c7fa;
+        background: var(--gm3-sys-color-primary, #a8c7fa);
+        transition: opacity .5s ease-out;
+    }
 
-.moreGoogle:hover::before {
-    opacity: .08;
+    &:hover::before {
+        opacity: .08;
+    }
 }
 
 .ntp-module {
