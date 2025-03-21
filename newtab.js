@@ -31,7 +31,7 @@ $(window).on('load', function () {
     colorSchemeQueryList.addEventListener('change', setColorScheme);
 
 
-    $('.version').text('v' + browser.runtime.getManifest().version);
+    $('.version').text('v' + chrome.runtime.getManifest().version);
 
     $(".faves-module").sortable({
         // containment: "parent",
@@ -41,10 +41,10 @@ $(window).on('load', function () {
         items: ".user-bookmark"
     });
 
-    browser.bookmarks.onCreated.addListener(bookmarkHandler);
-    browser.bookmarks.onChanged.addListener(bookmarkHandler);
-    browser.bookmarks.onMoved.addListener(bookmarkHandler);
-    browser.bookmarks.onRemoved.addListener(bookmarkHandler);
+    chrome.bookmarks.onCreated.addListener(bookmarkHandler);
+    chrome.bookmarks.onChanged.addListener(bookmarkHandler);
+    chrome.bookmarks.onMoved.addListener(bookmarkHandler);
+    chrome.bookmarks.onRemoved.addListener(bookmarkHandler);
 
     var udl = localStorage.getItem('user-downloads');
     if (udl) {
@@ -174,7 +174,7 @@ function setBackground() {
 
 $('.faves-module').on('sortstop', function (e) {
     var newIndex = $(".faves-module .user-bookmark").index($('.user-bookmark[bookmark-id="' + itemID + '"]'));
-    browser.bookmarks.move(itemID, { index: newIndex });
+    chrome.bookmarks.move(itemID, { index: newIndex });
     e.stopPropagation();
 })
 
@@ -244,7 +244,7 @@ $(document).on('click', '.user-bookmark', function (e) {
             $('.faves-module').attr('folderopen', true);
 
             $('.user-bookmark').remove();
-            browser.bookmarks.getChildren(currentFolderID).then((childs) => {
+            chrome.bookmarks.getChildren(currentFolderID).then((childs) => {
                 // var toolbarNode = childs[0].children[1];
                 for (var i = 0; i < childs.length; i++) {
                     var currentChild = childs[i];
@@ -252,7 +252,7 @@ $(document).on('click', '.user-bookmark', function (e) {
                     const icn = $('<div class="icon surface-item">');
                     const lbl = $('<p class="label">');
                     if (currentChild.type == 'folder') {
-                        browser.bookmarks.getChildren(currentChild.id).then((childs) => {
+                        chrome.bookmarks.getChildren(currentChild.id).then((childs) => {
                             icn.attr('numcis', childs.length);
                         });
                     } else if (currentChild.type == 'bookmark') {
@@ -275,13 +275,6 @@ $(document).on('click', '.user-bookmark', function (e) {
                     div.attr('bookmark-id', currentChild.id);
                     div.attr('bookmark-parent', currentChild.parentId);
                     $('.faves-module').append(div);
-                    // VanillaTilt.init(document.querySelectorAll(".icon"), {
-                    //     max: 15,
-                    //     speed: 400,
-                    //     glare: true,
-                    //     scale: 1.1,
-                    //     "max-glare": .5
-                    // });
                 }
             });
         } else {
@@ -297,14 +290,14 @@ $(document).on('click', '.backBtn', function (e) {
 
         bookmarkHandler();
     } else if (parentFolderId !== 'toolbar_____') {
-        browser.bookmarks.get(parentFolderId).then((results) => {
+        chrome.bookmarks.get(parentFolderId).then((results) => {
             parentFolderName = results[0].title;
         });
         $('.faves-module').attr('label', parentFolderName);
         $('.faves-module').attr('folderopen', true);
 
         $('.user-bookmark').remove();
-        browser.bookmarks.getChildren(parentFolderId).then((childs) => {
+        chrome.bookmarks.getChildren(parentFolderId).then((childs) => {
             // var toolbarNode = childs[0].children[1];
             for (var i = 0; i < childs.length; i++) {
                 var currentChild = childs[i];
@@ -312,7 +305,7 @@ $(document).on('click', '.backBtn', function (e) {
                 const icn = $('<div class="icon surface-item">');
                 const lbl = $('<p class="label">');
                 if (currentChild.type == 'folder') {
-                    browser.bookmarks.getChildren(currentChild.id).then((childs) => {
+                    chrome.bookmarks.getChildren(currentChild.id).then((childs) => {
                         icn.attr('numcis', childs.length);
                     });
                 } else if (currentChild.type == 'bookmark') {
@@ -336,13 +329,6 @@ $(document).on('click', '.backBtn', function (e) {
                 div.attr('bookmark-id', currentChild.id);
                 div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
-                // VanillaTilt.init(document.querySelectorAll(".icon"), {
-                //     max: 15,
-                //     speed: 400,
-                //     glare: true,
-                //     scale: 1.1,
-                //     "max-glare": .5
-                // });
             }
         });
     }
@@ -350,7 +336,7 @@ $(document).on('click', '.backBtn', function (e) {
     currentFolderID = parentFolderId
     currentFolderName = parentFolderName
 
-    browser.bookmarks.get(parentFolderId).then((results) => {
+    chrome.bookmarks.get(parentFolderId).then((results) => {
         parentFolderId = results[0].parentId;
     });
 
@@ -384,7 +370,7 @@ $('.icm-newtab').on('click', function () {
 })
 
 $('.icm-delete').on('click', function () {
-    browser.bookmarks.remove(contextItem);
+    chrome.bookmarks.remove(contextItem);
     bookmarkHandler();
     $('.item-context-menu').removeClass('visible');
 })
@@ -428,7 +414,7 @@ function nameCheck() {
     const hasAttribute = Array.from($('.label')).some(element => element.hasAttribute('contenteditable'));
     if (hasAttribute) {
         if (itemID) {
-            browser.bookmarks.update(itemID, { title: $('.user-bookmark[bookmark-id="' + itemID + '"] .label').text() })
+            chrome.bookmarks.update(itemID, { title: $('.user-bookmark[bookmark-id="' + itemID + '"] .label').text() })
             $(this).attr('contenteditable', 'false');
             $(".faves-module").sortable("enable");
         }
@@ -463,7 +449,7 @@ function downloadsModule() {
     $('.user-download').remove();
     $('.downloads-module').addClass('is-empty');
 
-    browser.downloads.search({
+    chrome.downloads.search({
         limit: 8,
         orderBy: ["-startTime"]
     }).then(function (items) {
@@ -471,18 +457,18 @@ function downloadsModule() {
             var div = $("<div>").addClass("user-download").addClass("surface-item");
             var img = $("<div>").addClass("icon");
             var label = $("<p>").addClass("label").text(item.filename.slice(item.filename.lastIndexOf('/') + 1));
-            browser.downloads.getFileIcon(item.id).then(function (iconUrl) {
+            chrome.downloads.getFileIcon(item.id).then(function (iconUrl) {
                 img.css("background-image", "url(" + iconUrl + ")");
             });
             div.append(img).append(label);
             div.click(function () {
-                browser.downloads.open(item.id)
+                chrome.downloads.open(item.id)
             })
             div.hover(
                 function () {
                     var button = $("<button class='showFile'>").attr('data-text', "􀊫");
                     button.click(function () {
-                        browser.downloads.show(item.id)
+                        chrome.downloads.show(item.id)
                     })
                     $(this).append(button);
                 },
@@ -508,13 +494,13 @@ function bookmarkHandler() {
     $('.faves-module').hide();
     $('.user-bookmark').remove();
     $('.faves-module').addClass('is-empty');
-    browser.bookmarks.getTree().then((bookmarks) => {
-        var toolbarNode = bookmarks[0].children[1];
-        for (var i = 0; i < toolbarNode.children.length; i++) {
-            var currentChild = toolbarNode.children[i];
+
+    chrome.bookmarks.getChildren("1").then((toolbarNode) => {
+        toolbarNode.forEach((currentChild) => {
             const div = $('<div class="user-bookmark"></div>');
             const icn = $('<div class="icon surface-item">');
             const lbl = $('<p class="label">');
+
             if (currentChild.type == 'separator') {
                 div.attr('bookmark-index', currentChild.index);
                 div.attr('bookmark-type', currentChild.type);
@@ -522,7 +508,7 @@ function bookmarkHandler() {
                 div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
             } else if (currentChild.type == 'folder') {
-                browser.bookmarks.getChildren(currentChild.id).then((childs) => {
+                chrome.bookmarks.getChildren(currentChild.id).then((childs) => {
                     icn.attr('numcis', childs.length);
                 });
             } else if (currentChild.type == 'bookmark') {
@@ -531,7 +517,6 @@ function bookmarkHandler() {
                 const frontIcn = $('<div class="frontIcn">');
                 backIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
                 frontIcn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
-                // icn.css('background-image', "url('https://s2.googleusercontent.com/s2/favicons?sz=32&domain_url=" + currentChild.url + "')");
 
                 icn.append(backIcn);
                 icn.append(frontIcn);
@@ -546,26 +531,16 @@ function bookmarkHandler() {
                 div.attr('bookmark-id', currentChild.id);
                 div.attr('bookmark-parent', currentChild.parentId);
                 $('.faves-module').append(div);
-                //     VanillaTilt.init(document.querySelectorAll(".icon"), {
-                //         max: 15,
-                //         speed: 400,
-                //         glare: true,
-                //         scale: 1.1,
-                //         "max-glare": .5
-                //     });
             }
-        }
-        var favItems = $('.faves-module').children('.user-bookmark').length;
-        if (favItems === 0) {
+        });
 
-        } else if (favItems > 0) {
-            $('.faves-module').addClass('is-empty');
-            $('.faves-module').removeClass('is-empty');
-            $('.faves-module').sortable("refresh");
+        const favItems = $('.faves-module').children('.user-bookmark').length;
+        if (favItems > 0) {
+            $('.faves-module').removeClass('is-empty').sortable("refresh");
         }
+
+        $('.faves-module').show();
     });
-
-    $('.faves-module').show();
 }
 
 
@@ -663,3 +638,16 @@ $(document).on('change', '.settingCB[id="cBar"]', function () {
     }
     localStorage.setItem('user-cbar', state);
 })
+
+const savedColor = localStorage.getItem('backColor');
+if (savedColor) {
+    $('.back').css('background-color', savedColor);
+    $('.backColorSel').val(savedColor); // Set input to saved color if applicable
+}
+
+// Listen for color input changes and update background color & localStorage
+$('.backColorSel').on('input', function () {
+    const selectedColor = $(this).val(); // Get the selected color value
+    $('.back').css('background-color', selectedColor); // Apply the color
+    localStorage.setItem('backColor', selectedColor); // Save the color in localStorage
+});
